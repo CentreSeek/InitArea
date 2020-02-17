@@ -1,0 +1,57 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /yjjk
+#  ssl:
+#    key-store: classpath:tonticn.cn.jks
+#    key-store-password: 66i49euxdw7919
+#    keyStoreType: JKS
+
+spring:
+  datasource:
+    username: yjjk
+    password: YJjk_2018
+    #    password: 123qqq...A
+    #    url: jdbc:mysql://118.31.14.197:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    #    url: jdbc:mysql://192.168.31.84:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    url: jdbc:mysql://192.168.31.84:3306/monitor_pt?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    default-property-inclusion: non_null
+  #    druid:
+  #      initial-size: 8
+  #        min-idle: 1
+  #        max-active: 20
+  #        max-wait: 60000
+  #        time-between-eviction-runsMillis: 60000
+  #        min-evictable-idle-timeMillis: 300000
+  #        validation-query: select 'x' FROM DUAL
+  #        test-while-idle: true
+  #        test-on-borrow: false
+  #        test-on-return: false
+  #        pool-prepared-statements: true
+  #        max-open-prepared-statements: 20
+  #        max-pool-prepared-statement-per-connection-size: 20
+  #        filters: stat
+  #        connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+  #        use-global-data-source-stat: true
+
+
+mybatis:
+  mapper-locations: classpath:mapping/*Mapper.xml
+  type-aliases-package: com.yjjk.monitor.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+
+#showSql
+logging:
+  file: logs/${spring.application.name}.log
+  level:
+    com:
+      yjjk:
+        monitor:
+          mapper:
+            DEBUG
+web:
+  upload-path: E:\YJJKProject\UploadImg
