@@ -11,14 +11,13 @@
 package com.yjjk.monitor.configer;
 
 import com.alibaba.fastjson.JSON;
-import com.yjjk.monitor.controller.BaseController;
 import com.yjjk.monitor.entity.CurrentTemperature;
 import com.yjjk.monitor.entity.ResultEntity;
 import com.yjjk.monitor.entity.properties.AreaSign;
 import com.yjjk.monitor.service.TemperatureService;
 import com.yjjk.monitor.utility.DateUtil;
-import com.yjjk.monitor.utility.NetUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,19 +28,22 @@ import java.util.List;
 
 @Component
 @Configuration      // 1.主要用于标记配置类，兼备Component的效果。
-@EnableScheduling /** 2.开启定时任务 */
+@EnableScheduling
+/** 2.开启定时任务 */
 /**
  * @author CentreS
  * @Description: 定时批量过期预约
  * @create 2019-06-21
  */
-public class TimingPlan{
+public class TimingPlan {
 
-    protected static Logger logger = Logger.getLogger(BaseController.class);
+    private static Logger logger = LoggerFactory.getLogger(TimingPlan.class);
+    private String token = null;
     @Resource
     private TemperatureService temperatureService;
     @Resource
     private AreaSign areaSign;
+
     /**
      * 定时计划：1.清理过期预约
      */
@@ -55,27 +57,31 @@ public class TimingPlan{
     /**
      * 实时体温数据推送
      */
-//    @Scheduled(cron = "0 */1 * * * ?")
+//    @Scheduled(cron = "*/2 * * * * ?")
     @Scheduled(cron = "0 */1 * * * ?")
     private void pushTemperatureInfo() {
-        System.out.println("执行任务 ："+ DateUtil.getCurrentTime());
-        System.out.println(areaSign.getAreaSign());
+        if (token == null) {
+            token = temperatureService.getToken(areaSign);
+            logger.info("获取token ：" + token);
+            if (token == null) {
+                logger.error("获取token失败");
+            }
+        }
+        logger.info("执行体温推送任务 ：" + DateUtil.getCurrentTime());
         List<CurrentTemperature> list = temperatureService.getTemperatureInfoList();
-//        for (int i = 0; i < list.size(); i++) {
-////            list.get(i).setBoxBatteryStatus("NORMAL");
-////        }
+        for (int i = 0; i < list.size(); i++) {
+            list.get(i).setBoxBatteryStatus("NORMAL");
+        }
+
         ResultEntity resultEntity = new ResultEntity();
         resultEntity.setSuccess(true).setMessage("success").setData(list);
         String jsonResult = JSON.toJSONString(resultEntity);
-        System.out.println(jsonResult);
+        logger.info("推送数据     ：" + jsonResult);
         try {
-            NetUtils.doPost(areaSign.getAreaSign(),jsonResult);
+            boolean result = temperatureService.pushTemperature(areaSign, token, jsonResult);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-
 
 }

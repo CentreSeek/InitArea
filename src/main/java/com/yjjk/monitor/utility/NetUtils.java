@@ -17,11 +17,17 @@ package com.yjjk.monitor.utility;
  */
 
 import com.alibaba.fastjson.JSON;
+import com.yjjk.monitor.entity.TokenResultEntity.TokenResult;
+import com.yjjk.monitor.entity.properties.AreaSign;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.SimpleHttpConnectionManager;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -33,12 +39,14 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import java.util.Map.Entry;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -161,5 +169,108 @@ public final class NetUtils {
         return doPost(url, JSON.toJSONString(data));
     }
 
+    public static TokenResult getAccessToken(AreaSign areaSign) throws IOException {
+        // 输入服务网址
+        HttpClient client = new HttpClient();
+        // HttpClient client = new HttpClient(new HttpClientParams(), new SimpleHttpConnectionManager(true));
+        // GetMethod
+        PostMethod post = new PostMethod(areaSign.getTokenArea());
+        // 设置参数
+        post.setParameter("username", areaSign.getUsername());
+        post.setParameter("password", areaSign.getPassword());
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(3000);
+        // 执行,返回一个结果码
+        int code = client.executeMethod(post);
+        // 获取xml结果
+        String result = post.getResponseBodyAsString();
+        System.out.println(result);
+        // 释放连接
+        post.releaseConnection();
+        // 关闭连接
+        ((SimpleHttpConnectionManager) client.getHttpConnectionManager()).shutdown();
+        return JSON.parseObject(result, TokenResult.class);
+    }
+
+    public static String test() throws IOException {
+        // 输入服务网址
+        HttpClient client = new HttpClient();
+        // HttpClient client = new HttpClient(new HttpClientParams(), new SimpleHttpConnectionManager(true));
+        // GetMethod
+        PostMethod post = new PostMethod("http://123.57.226.94:8181/query.json?");
+        // 设置参数
+//        AreaSign areaSign = new AreaSign();
+//        areaSign.setTokenArea("http://123.57.226.94:8181/api/auth/login.json?");
+//        areaSign.setUsername("yj001");
+//        areaSign.setPassword("e10adc3949ba59abbe56e057f20f883e");
+//        TokenResult accessToken = NetUtils.getAccessToken(areaSign);
+//        post.setRequestHeader("authToken",accessToken.getToken());
+//        post.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+//        post.setParameter("command", "savetempdata");
+//        post.setParameter("dept", "");
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(3000);
+        // 执行,返回一个结果码
+        int code = client.executeMethod(post);
+        // 获取xml结果
+        String result = post.getResponseBodyAsString();
+        System.out.println(result);
+        // 释放连接
+        post.releaseConnection();
+        // 关闭连接
+        ((SimpleHttpConnectionManager) client.getHttpConnectionManager()).shutdown();
+        return post.getResponseBodyAsString().toString();
+    }
+
+    public static void main(String[] args) throws IOException {
+        System.out.println(test());
+    }
+
+
+
+    public static String postMap(String url, Map<String, String> headerMap, Map<String, String> contentMap) {
+        String result = null;
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost post = new HttpPost(url);
+        List<NameValuePair> content = new ArrayList<NameValuePair>();
+        Iterator iterator = contentMap.entrySet().iterator();           //将content生成entity
+        while (iterator.hasNext()) {
+            Entry<String, String> elem = (Entry<String, String>) iterator.next();
+            content.add(new BasicNameValuePair(elem.getKey(), elem.getValue()));
+        }
+        CloseableHttpResponse response = null;
+        try {
+            Iterator headerIterator = headerMap.entrySet().iterator();          //循环增加header
+            while (headerIterator.hasNext()) {
+                Entry<String, String> elem = (Entry<String, String>) headerIterator.next();
+                post.addHeader(elem.getKey(),elem.getValue());
+            }
+            if (content.size() > 0) {
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(content, "UTF-8");
+                post.setEntity(entity);
+            }
+            response = httpClient.execute(post);            //发送请求并接收返回数据
+            if (response != null && response.getStatusLine().getStatusCode() == 200) {
+                HttpEntity entity = response.getEntity();       //获取response的body部分
+                result = EntityUtils.toString(entity);          //读取reponse的body部分并转化成字符串
+            }
+            return result;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpClient.close();
+                if (response != null) {
+                    response.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return null;
+    }
 
 }

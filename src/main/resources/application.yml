@@ -2,8 +2,8 @@ spring:
   application:
     name: monitor_pt
   profiles:
-        active: local
-#    active: dev
+#        active: local
+    active: dev
   datasource:                                           # 数据源的相关配置
     type: com.zaxxer.hikari.HikariDataSource          # 数据源类型：HikariCP
     hikari:

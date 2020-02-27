@@ -11,5 +11,8 @@ import org.springframework.stereotype.Component;
 @Data
 public class AreaSign {
     private String areaSign;
+    private String tokenArea;
+    private String username;
+    private String password;
 
 }

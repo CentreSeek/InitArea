@@ -1,6 +1,7 @@
 package com.yjjk.monitor.service;
 
 import com.yjjk.monitor.entity.CurrentTemperature;
+import com.yjjk.monitor.entity.properties.AreaSign;
 
 import java.util.List;
 
@@ -33,4 +34,20 @@ public interface TemperatureService {
      * @return
      */
     int temperatureInfoPersistent(String dateOfOneMonthAgo);
+
+    /**
+     * 远程获取token
+     * @param areaSign
+     * @return
+     */
+    String getToken(AreaSign areaSign);
+
+    /**
+     * 远程推送体温数据
+     * @param areaSign
+     * @param token
+     * @param data
+     * @return
+     */
+    boolean pushTemperature(AreaSign areaSign,String token,String data);
 }
