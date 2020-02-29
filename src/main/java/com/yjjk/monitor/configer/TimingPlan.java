@@ -60,13 +60,13 @@ public class TimingPlan {
 //    @Scheduled(cron = "*/2 * * * * ?")
     @Scheduled(cron = "0 */1 * * * ?")
     private void pushTemperatureInfo() {
-        if (token == null) {
-            token = temperatureService.getToken(areaSign);
-            logger.info("获取token ：" + token);
-            if (token == null) {
-                logger.error("获取token失败");
-            }
-        }
+//        if (token == null) {
+//            token = temperatureService.getToken(areaSign);
+//            logger.info("获取token ：" + token);
+//            if (token == null) {
+//                logger.error("获取token失败");
+//            }
+//        }
         logger.info("执行体温推送任务 ：" + DateUtil.getCurrentTime());
         List<CurrentTemperature> list = temperatureService.getTemperatureInfoList();
         for (int i = 0; i < list.size(); i++) {

@@ -64,7 +64,7 @@ public class TemperatureServiceImpl extends BaseService implements TemperatureSe
     @Override
     public boolean pushTemperature(AreaSign areaSign, String token, String data) {
         Map header = new HashMap();
-        header.put("Authorization", token);
+//        header.put("Authorization", token);
         Map content = new HashMap();
         content.put("command", "savetempdata");
         content.put("dept", data);
