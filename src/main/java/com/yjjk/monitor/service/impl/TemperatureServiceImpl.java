@@ -71,6 +71,7 @@ public class TemperatureServiceImpl extends BaseService implements TemperatureSe
 
         String s = NetUtils.postMap(areaSign.getAreaSign(), header, content);
         PushResult pushResult = JSON.parseObject(s, PushResult.class);
+        logger.info("pushTemperature返回值：       "+pushResult.toString());
         if ("success".equals(pushResult.getStatus())) {
             return true;
         } else{
