@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /yjjk
+    context-path: /centres
 #  ssl:
 #    key-store: classpath:tonticn.cn.jks
 #    key-store-password: 66i49euxdw7919
@@ -14,7 +14,7 @@ spring:
     #    password: 123qqq...A
     #    url: jdbc:mysql://118.31.14.197:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
     #    url: jdbc:mysql://192.168.31.84:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
-    url: jdbc:mysql://192.168.31.84:3306/monitor_pt?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    url: jdbc:mysql://192.168.31.84:3306/erp?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     default-property-inclusion: non_null
@@ -39,7 +39,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
-  type-aliases-package: com.yjjk.monitor.entity
+  type-aliases-package: com.centres.area.entity
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: true
@@ -53,5 +53,3 @@ logging:
         monitor:
           mapper:
             DEBUG
-web:
-  upload-path: E:\YJJKProject\UploadImg
